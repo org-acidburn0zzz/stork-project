@@ -1,0 +1,7 @@
+p, marcin, /servers/2/*, (GET)|(POST)|(PUT)|(DELETE)
+p, xiong, /servers/3/*, GET
+p, subnet_watchers, /subnets, GET
+g, marcin, subnet_watchers
+p, machine_managers, /machines/{id}/*, (GET)|(POST)|(PUT)|(DELETE)
+g, marcin, machine_managers
+
