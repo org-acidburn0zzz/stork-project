@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package stork;
+
+service StorkAgent {
+    rpc getVersion(VersionParams) returns (StorkVersion) {}
+}
+
+message VersionParams { }
+
+message StorkVersion {
+    string versionText = 1;
+}

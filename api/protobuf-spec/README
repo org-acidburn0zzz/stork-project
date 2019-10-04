@@ -1,0 +1,12 @@
+The protofile specifies the RPC calls. In order to generate the code from it
+the following command is to be issued.
+
+protoc -I stork/ stork/api/protobuf-spec/agent.proto --go_out=plugins=grpc:stork
+
+The generated agent.pb.go has been also checked in to the repository.
+
+In order to test the RPC call run cmd/stag/stag (as a server) and then
+run cmd/stork/stork (as a client). The client should receive the hardcoded
+stork "version" string.
+
+The latest versions of wireshark can decode grpc and HTTP2 binary format.
