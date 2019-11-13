@@ -9,21 +9,15 @@ import (
 
 type dbLogger struct { }
 
-
-// Hook run before SQL query execution.
 func (d dbLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
 	log.Println(q.FormattedQuery())
 	return c, nil
 }
 
-// Hook run after SQL query execution.
 func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
 	return nil
 }
 
-// Create only new PgDB instance.
-func NewPgDbConn(pgParams *pg.Options) (*PgDB, error) {
-	db := pg.Connect(pgParams)
 
 	// Test connection to database.
 	var n int
