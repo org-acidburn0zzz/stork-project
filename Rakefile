@@ -358,3 +358,16 @@ end
 
 desc 'Download all dependencies'
 task :prepare_env => [GO, GOSWAGGER, GOLANGCILINT, SWAGGER_CODEGEN, NPX]
+
+# Generate experimental stork-cli
+desc 'Generate experimental stork-cli code'
+task :cli do
+
+  Dir.chdir('cli') do
+    sh "java -jar #{SWAGGER_CODEGEN} generate -l go -i #{SWAGGER_FILE} -o src/stork-cli --additional-properties packageName=storkCli"
+    sh "go get github.com/antihax/optional"
+    sh "go get golang.org/x/oauth2"
+  end
+
+
+end
