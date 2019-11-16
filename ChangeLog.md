@@ -1,3 +1,8 @@
+* 12 [build] tomek
+    Extended the build system to be able to run on MacOS. Also updated
+    installation instructions regarding how to build and run Stork natively.
+    (Gitlab #87)
+
 * 11 [func] marcin
 
     Stork server automatically migrates the database schema to the latest
