@@ -21,6 +21,9 @@ func (d dbLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
 	return nil
 }
 
+// Create only new PgDB instance.
+func NewPgDbConn(pgParams *pg.Options) (*PgDB, error) {
+	db := pg.Connect(pgParams)
 
 	// Test connection to database.
 	var n int

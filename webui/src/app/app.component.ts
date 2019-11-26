@@ -26,7 +26,6 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadingInProgress = this.loadingService.getState()
         this.menuItems = [
             {
                 label: 'Configuration',
