@@ -347,3 +347,157 @@ func TestDeleteMachine(t *testing.T) {
 	okRsp = rsp.(*services.GetMachineOK)
 	require.Equal(t, m.Id, okRsp.Payload.ID)
 }
+
+func TestGetService(t *testing.T) {
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	defer teardown()
+
+	settings := RestApiSettings{}
+	fa := FakeAgents{}
+	rapi, err := NewRestAPI(&settings, dbSettings, db, &fa)
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	// get non-existing service
+	params := services.GetServiceParams{
+		ID: 123,
+	}
+	rsp := rapi.GetService(ctx, params)
+	require.IsType(t, &services.GetServiceDefault{}, rsp)
+	defaultRsp := rsp.(*services.GetServiceDefault)
+	require.Equal(t, 404, getStatusCode(*defaultRsp))
+	require.Equal(t, "cannot find service with id 123", *defaultRsp.Payload.Message)
+
+	// add machine
+	m := &dbmodel.Machine{
+		Address: "localhost",
+		AgentPort: 8080,
+	}
+	err = dbmodel.AddMachine(db, m)
+	require.NoError(t, err)
+
+	// add service to machine
+	s := &dbmodel.Service{
+		Id: 0,
+		MachineID: m.Id,
+		Type: "kea",
+		CtrlPort: 1234,
+		Active: true,
+	}
+	err = dbmodel.AddService(db, s)
+	require.NoError(t, err)
+
+	// get added service
+	params = services.GetServiceParams{
+		ID: s.Id,
+	}
+	rsp = rapi.GetService(ctx, params)
+	require.IsType(t, &services.GetServiceOK{}, rsp)
+	okRsp := rsp.(*services.GetServiceOK)
+	require.Equal(t, s.Id, okRsp.Payload.ID)
+}
+
+func TestRestGetService(t *testing.T) {
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	defer teardown()
+
+	settings := RestApiSettings{}
+	fa := FakeAgents{}
+	rapi, err := NewRestAPI(&settings, dbSettings, db, &fa)
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	// get non-existing service
+	params := services.GetServiceParams{
+		ID: 123,
+	}
+	rsp := rapi.GetService(ctx, params)
+	require.IsType(t, &services.GetServiceDefault{}, rsp)
+	defaultRsp := rsp.(*services.GetServiceDefault)
+	require.Equal(t, 404, getStatusCode(*defaultRsp))
+	require.Equal(t, "cannot find service with id 123", *defaultRsp.Payload.Message)
+
+	// add machine
+	m := &dbmodel.Machine{
+		Address: "localhost",
+		AgentPort: 8080,
+	}
+	err = dbmodel.AddMachine(db, m)
+	require.NoError(t, err)
+
+	// add service to machine
+	s := &dbmodel.Service{
+		Id: 0,
+		MachineID: m.Id,
+		Type: "kea",
+		CtrlPort: 1234,
+		Active: true,
+	}
+	err = dbmodel.AddService(db, s)
+	require.NoError(t, err)
+
+	// get added service
+	params = services.GetServiceParams{
+		ID: s.Id,
+	}
+	rsp = rapi.GetService(ctx, params)
+	require.IsType(t, &services.GetServiceOK{}, rsp)
+	okRsp := rsp.(*services.GetServiceOK)
+	require.Equal(t, s.Id, okRsp.Payload.ID)
+}
+
+func TestRestGetServices(t *testing.T) {
+	db, dbSettings, teardown := dbtest.SetupDatabaseTestCase(t)
+	defer teardown()
+
+	settings := RestApiSettings{}
+	fa := FakeAgents{}
+	rapi, err := NewRestAPI(&settings, dbSettings, db, &fa)
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	// get empty list of service
+	params := services.GetServicesParams{}
+	rsp := rapi.GetServices(ctx, params)
+	require.IsType(t, &services.GetServicesOK{}, rsp)
+	okRsp := rsp.(*services.GetServicesOK)
+	require.Equal(t, int64(0), okRsp.Payload.Total)
+
+	// add machine
+	m := &dbmodel.Machine{
+		Address: "localhost",
+		AgentPort: 8080,
+	}
+	err = dbmodel.AddMachine(db, m)
+	require.NoError(t, err)
+
+	// add service kea to machine
+	s1 := &dbmodel.Service{
+		Id: 0,
+		MachineID: m.Id,
+		Type: "kea",
+		CtrlPort: 1234,
+		Active: true,
+	}
+	err = dbmodel.AddService(db, s1)
+	require.NoError(t, err)
+
+	// add service bind to machine
+	s2 := &dbmodel.Service{
+		Id: 0,
+		MachineID: m.Id,
+		Type: "bind",
+		CtrlPort: 4321,
+		Active: true,
+	}
+	err = dbmodel.AddService(db, s2)
+	require.NoError(t, err)
+
+	// get added service
+	params = services.GetServicesParams{
+	}
+	rsp = rapi.GetServices(ctx, params)
+	require.IsType(t, &services.GetServicesOK{}, rsp)
+	okRsp = rsp.(*services.GetServicesOK)
+	require.Equal(t, int64(2), okRsp.Payload.Total)
+}

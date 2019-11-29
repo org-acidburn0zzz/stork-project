@@ -10,9 +10,21 @@ import (
 	"isc.org/stork"
 )
 
+type FakeServiceMonitor struct {
+}
+
+func (fsm *FakeServiceMonitor) GetServices() []interface{} {
+	return nil
+}
+
+func (fsm *FakeServiceMonitor) Shutdown() {
+}
+
 
 func TestGetState(t *testing.T) {
-	sa := StorkAgent{}
+	sa := StorkAgent{
+		ServiceMonitor: &FakeServiceMonitor{},
+	}
 
 	ctx := context.Background()
 	rsp, err := sa.GetState(ctx, &agentapi.GetStateReq{})
