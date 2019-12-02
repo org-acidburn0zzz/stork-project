@@ -21,6 +21,10 @@ const routes: Routes = [
         component: LoginScreenComponent,
     },
     {
+        path: 'logout',
+        component: LoginScreenComponent,
+    },
+    {
         path: 'machines',
         pathMatch: 'full',
         redirectTo: 'machines/all',

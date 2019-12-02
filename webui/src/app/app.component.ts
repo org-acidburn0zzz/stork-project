@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
+import { Router, UrlSegment } from '@angular/router'
 import { Observable } from 'rxjs'
 
 import { MenubarModule } from 'primeng/menubar'
@@ -47,11 +47,25 @@ export class AppComponent implements OnInit {
                     },
                 ],
             },
+            {
+                label: 'Profile',
+                items: [
+                    {
+                        label: 'Settings',
+                        icon: 'fa fa-cog',
+                        routerLink: '/settings',
+                    },
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-sign-out',
+                        routerLink: '/logout',
+                    },
+                ],
+            },
         ]
     }
 
     signOut() {
-        this.auth.logout()
-        this.router.navigate(['/login'])
+        this.router.navigate(['/logout'])
     }
 }
