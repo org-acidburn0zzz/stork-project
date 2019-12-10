@@ -39,6 +39,7 @@ func setupCreateSchema(t *testing.T) *PgDB {
 	require.NoError(t, err)
 	_, _, err = Migrate(db, "up")
 	require.NoError(t, err)
+
 	return db
 }
 
@@ -106,7 +107,7 @@ func TestInitMigrateToLatest(t *testing.T) {
 	o, n, err := MigrateToLatest(db)
 	require.NoError(t, err)
 	require.Equal(t, int64(0), o)
-	require.GreaterOrEqual(t, int64(3), n)
+	require.GreaterOrEqual(t, int64(4), n)
 }
 
 // Test that available schema version is returned as expected.
