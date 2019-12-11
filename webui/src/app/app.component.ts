@@ -21,13 +21,17 @@ export class AppComponent implements OnInit {
     menuItems: MenuItem[]
 
     constructor(private router: Router, private auth: AuthService, private loadingService: LoadingService) {
-        this.auth.currentUser.subscribe(x => (this.currentUser = x))
+        this.auth.currentUser.subscribe(x => {
+            this.currentUser = x
+            this.initMenuItems()
+        })
         this.loadingInProgress = this.loadingService.getState()
     }
 
-    ngOnInit() {
-        this.menuItems = [
-            {
+    initMenuItems() {
+        this.menuItems = []
+        if (this.auth.superAdmin()) {
+            this.menuItems.push({
                 label: 'Configuration',
                 items: [
                     {
@@ -36,7 +40,9 @@ export class AppComponent implements OnInit {
                         routerLink: '/users',
                     },
                 ],
-            },
+            })
+        }
+        this.menuItems = this.menuItems.concat([
             {
                 label: 'Services',
                 items: [
@@ -62,7 +68,11 @@ export class AppComponent implements OnInit {
                     },
                 ],
             },
-        ]
+        ])
+    }
+
+    ngOnInit() {
+        this.initMenuItems()
     }
 
     signOut() {
