@@ -381,6 +381,10 @@ definitions:
         type: string
       lastname:
         type: string
+      groups:
+        type: array
+        items:
+          type: integer
 
   Password:
     type: string

@@ -158,7 +158,7 @@ func Authenticate(db *pg.DB, user *SystemUser) (bool, error) {
 // beginning of the page and the maximum size of the page. If these values are set
 // to 0, all users are returned.
 func GetUsers(db *dbops.PgDB, offset, limit int, order SystemUserOrderBy) (users SystemUsers, err error) {
-	q := db.Model(&users)
+	q := db.Model(&users).Relation("Groups")
 
 	switch order {
 	case SystemUserOrderByLoginEmail:
