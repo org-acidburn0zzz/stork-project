@@ -59,7 +59,8 @@ func TestGetCtrlPortFromKeaConfigBadContent(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	// check reading from proper file
+	// check reading from prepared file with bad content
+	// so 0 should be returned as port
 	port := getCtrlPortFromKeaConfig(tmpFile.Name())
 	require.Equal(t, 0, port)
 }

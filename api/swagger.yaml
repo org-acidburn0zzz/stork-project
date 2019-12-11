@@ -176,6 +176,7 @@ paths:
       summary: Get list of machines.
       description: >-
         It is possible to filter list of machines by several fields. It is also always paged.
+        Default page size is 10.
         A list of machines is returned in items field accompanied by total count
         which indicates total available number of records for given filtering
         parameters.
@@ -314,10 +315,11 @@ paths:
 
   /services:
     get:
-      summary: Get list of Services.
+      summary: Get list of services.
       description: >-
-        It is possible to filter list of services by several fields. It is also always paged.
-        A list of machines is returned in items field accompanied by total count
+        It is possible to filter the list of services by several fields. It is also always paged.
+        Default page size is 10.
+        A list of services is returned in items field accompanied by total count
         which indicates total available number of records for given filtering
         parameters.
       operationId: getServices
@@ -380,7 +382,9 @@ parameters:
   filterTextParam:
     name: text
     in: query
-    description: Filtering text, e.g. hostname for the machines.
+    description: >-
+      Filtering text, e.g. hostname for the machines
+      or version for the services.
     type: string
 
 definitions:
@@ -525,6 +529,8 @@ definitions:
         type: string
       version:
         type: string
+      active:
+        type: boolean
 
   Machines:
     type: object

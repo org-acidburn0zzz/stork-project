@@ -138,7 +138,6 @@ func detectKeaService(match []string) *ServiceKea {
 
 	keaConfPath := match[1]
 
-	//log.Printf("KEA: %+v %s %s", p, cmdline, keaConfPath)
 	ctrlPort := int64(getCtrlPortFromKeaConfig(keaConfPath))
 	keaService = &ServiceKea{
 		ServiceCommon: ServiceCommon{
@@ -153,10 +152,9 @@ func detectKeaService(match []string) *ServiceKea {
 
 	caUrl := fmt.Sprintf("http://localhost:%d", ctrlPort)
 
-	// retrieve ctrl-agent information
+	// retrieve ctrl-agent information, it is also used as a general service information
 	info, err := keaDaemonVersionGet(caUrl, "")
 	if err == nil {
-		//log.Printf("ver-get CA: %+v", info)
 		if int(info["result"].(float64)) == 0 {
 			keaService.Active = true
 			keaService.Version = info["text"].(string)
@@ -169,6 +167,15 @@ func detectKeaService(match []string) *ServiceKea {
 		log.Warnf("cannot get daemon version: %+v", err)
 	}
 
+	// add info about ctrl-agent daemon
+	caDaemon := KeaDaemon{
+		Name: "ca",
+		Active: keaService.Active,
+		Version: keaService.Version,
+		ExtendedVersion: keaService.ExtendedVersion,
+	}
+	keaService.Daemons = append(keaService.Daemons, caDaemon)
+
 	// get list of daemons configured in ctrl-agent
 	var jsonCmd = []byte(`{"command": "config-get"}`)
 	resp, err := http.Post(caUrl, "application/json", bytes.NewBuffer(jsonCmd))
@@ -178,7 +185,6 @@ func detectKeaService(match []string) *ServiceKea {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	//log.Println("response Body:", string(body))
 	var data interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
@@ -202,11 +208,11 @@ func detectKeaService(match []string) *ServiceKea {
 	if !ok {
 		return nil
 	}
-	m5, ok := m4["control-sockets"].(map[string]interface{})
+	daemonsListInCA, ok := m4["control-sockets"].(map[string]interface{})
 	if !ok {
 		return nil
 	}
-	for daemonName := range m5 {
+	for daemonName := range daemonsListInCA {
 		daemon := KeaDaemon{
 			Name: daemonName,
 			Active: false,
@@ -215,7 +221,6 @@ func detectKeaService(match []string) *ServiceKea {
 		// retrieve info about daemon
 		info, err := keaDaemonVersionGet(caUrl, daemonName)
 		if err == nil {
-			//log.Printf("ver-get %s: %+v", daemonName, info)
 			if int(info["result"].(float64)) == 0 {
 				daemon.Active = true
 				daemon.Version = info["text"].(string)
@@ -227,6 +232,10 @@ func detectKeaService(match []string) *ServiceKea {
 		} else {
 			log.Warnf("cannot get daemon version: %+v", err)
 		}
+		// if any daemon is inactive, then whole kea service is treated as inactive
+		if !daemon.Active {
+			keaService.Active = false
+		}
 
 		keaService.Daemons = append(keaService.Daemons, daemon)
 	}
@@ -235,7 +244,13 @@ func detectKeaService(match []string) *ServiceKea {
 }
 
 func (sm *serviceMonitor) detectServices() {
+	// Kea service is being detected by browsing list of processes in the systam
+	// where cmdline of the process contains given pattern with kea-ctr-agent
+	// substring. Such found processes are being processed further and all other
+	// Kea daemons are discovered and queried for their versions, etc.
 	keaPtrn := regexp.MustCompile(`kea-ctrl-agent.*-c\s+(\S+)`)
+
+	// TODO: BIND service is not yet being detect. It should happen here as well.
 
 	var services []interface{}
 

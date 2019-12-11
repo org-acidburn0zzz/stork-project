@@ -211,6 +211,38 @@ func TestGetMachine(t *testing.T) {
 	require.IsType(t, &services.GetMachineOK{}, rsp)
 	okRsp := rsp.(*services.GetMachineOK)
 	require.Equal(t, m.Id, okRsp.Payload.ID)
+
+	// add machine 2
+	m2 := &dbmodel.Machine{
+		Address: "localhost",
+		AgentPort: 8082,
+	}
+	err = dbmodel.AddMachine(db, m2)
+	require.NoError(t, err)
+
+	// add service to machine 2
+	s := &dbmodel.Service{
+		Id: 0,
+		MachineID: m2.Id,
+		Type: "kea",
+		CtrlPort: 1234,
+		Active: true,
+	}
+	err = dbmodel.AddService(db, s)
+	require.NoError(t, err)
+	require.NotEqual(t, 0, s.Id)
+
+	// get added machine 2 with kea service
+	params = services.GetMachineParams{
+		ID: m2.Id,
+	}
+	rsp = rapi.GetMachine(ctx, params)
+	require.IsType(t, &services.GetMachineOK{}, rsp)
+	okRsp = rsp.(*services.GetMachineOK)
+	require.Equal(t, m2.Id, okRsp.Payload.ID)
+	require.Len(t, okRsp.Payload.Services, 1)
+	require.Equal(t, s.Id, okRsp.Payload.Services[0].ID)
+
 }
 
 func TestUpdateMachine(t *testing.T) {

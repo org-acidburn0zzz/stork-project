@@ -34,11 +34,12 @@ export class AppComponent implements OnInit {
                         icon: 'fa fa-server',
                         routerLink: '/services/kea/all',
                     },
-                    {
-                        label: 'BIND DNS',
-                        icon: 'fa fa-server',
-                        routerLink: '/services/bind/all',
-                    },
+                    // TODO: add support for BIND services
+                    // {
+                    //     label: 'BIND DNS',
+                    //     icon: 'fa fa-server',
+                    //     routerLink: '/services/bind/all',
+                    // },
                     {
                         label: 'Machines',
                         icon: 'fa fa-server',

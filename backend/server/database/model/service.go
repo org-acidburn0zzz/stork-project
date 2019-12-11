@@ -7,7 +7,6 @@ import (
 	"github.com/go-pg/pg/v9/orm"
 	"github.com/pkg/errors"
 	"isc.org/stork"
-	//log "github.com/sirupsen/logrus"
 )
 
 type KeaDaemon struct {
@@ -53,7 +52,7 @@ func AddService(db *pg.DB, service *Service) error {
 	return nil
 }
 
-func reconvertServiceDetails(service *Service) error {
+func ReconvertServiceDetails(service *Service) error {
 	bytes, err := json.Marshal(service.Details)
 	if err != nil {
 		return errors.Wrapf(err, "problem with getting service from db: %v ", service)
@@ -77,7 +76,7 @@ func GetServiceById(db *pg.DB, id int64) (*Service, error) {
 	} else if err != nil {
 		return nil, errors.Wrapf(err, "problem with getting service %v", id)
 	}
-	err = reconvertServiceDetails(&service)
+	err = ReconvertServiceDetails(&service)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +94,7 @@ func GetServicesByMachine(db *pg.DB, machineId int64) ([]Service, error) {
 	}
 
 	for idx := range services {
-		err = reconvertServiceDetails(&services[idx])
+		err = ReconvertServiceDetails(&services[idx])
 		if err != nil {
 			return nil, err
 		}
@@ -140,7 +139,7 @@ func GetServicesByPage(db *pg.DB, offset int64, limit int64, text string, servic
 		return nil, 0, errors.Wrapf(err, "problem with getting services")
 	}
 	for idx := range services {
-		err = reconvertServiceDetails(&services[idx])
+		err = ReconvertServiceDetails(&services[idx])
 		if err != nil {
 			return nil, 0, err
 		}
