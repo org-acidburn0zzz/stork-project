@@ -1,3 +1,11 @@
+* 17 [func] marcin
+
+    Logged user can now change his/her password. Also, users are
+    associated with two default permission groups: super-admin and
+    admin. The former can create and modify users' accounts. The
+    latter is not allowed to modify other users' accounts.
+    (Gitlab #97)
+
 Stork 0.2.0 released on 2019-12-04.
 
 * 16 [bug] marcin
