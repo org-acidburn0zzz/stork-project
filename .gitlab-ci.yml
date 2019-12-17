@@ -76,7 +76,7 @@ danger:
     - sysctl -w net.ipv6.conf.all.disable_ipv6=1
     - sysctl -w net.ipv6.conf.default.disable_ipv6=1
   script:
-    - echo '149.20.48.126 gitlab.isc.org' >> /etc/hosts
+    - echo '149.20.1.108 gitlab.isc.org' >> /etc/hosts
     - gem install danger-commit_lint
     - danger --fail-on-errors=true --new-comment
 
