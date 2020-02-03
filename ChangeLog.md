@@ -1,3 +1,9 @@
+
+* 29 [test] tomek
+    Added new traffic-dhcp container that is able to send DHCP packets
+    towards agent-kea.
+    (Gitlab #9)
+
 Stork 0.4.0 released on 2020-02-05.
 
 * 28 [doc] tomek
@@ -196,5 +202,6 @@ LEGEND
           fix except that it will be handled as confidential and will cause
  	      security patch releases.
 * [perf]  Performance related change.
+* [test]  Enhancements or features related to testing and testing infrastructure.
 
 *: Backward incompatible or operational change.
