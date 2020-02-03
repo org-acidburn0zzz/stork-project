@@ -499,7 +499,7 @@ task :run_bind9_container do
 end
 
 desc 'Starts generating DHCP traffic (starts the traffic-dhcp docker container if it isn\'t running)'
-task :start_dhcp_traffic do
+task :start_traffic_dhcp do
   dhcp_traffic_id = `docker ps | grep traffic-dhcp | awk '{ print $1 }'`
   if dhcp_traffic_id != ""
     puts "traffic-dhcp container already running: #{dhcp_traffic_id}"
@@ -509,7 +509,7 @@ task :start_dhcp_traffic do
 end
 
 desc 'Stops generating DHCP traffic (stops the traffic-dhcp docker container)'
-task :stop_dhcp_traffic do
+task :stop_traffic_dhcp do
   dhcp_traffic_id = `docker ps | grep traffic-dhcp | awk '{ print $1 }'`
   if dhcp_traffic_id != ""
     sh "echo Stopping Docker container: #{dhcp_traffic_id}"
