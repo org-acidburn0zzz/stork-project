@@ -30,7 +30,8 @@ services:
     image: registry.gitlab.isc.org/isc-projects/stork/agent-kea:latest
     hostname: agent-kea
     networks:
-      - storknet
+      storknet:
+        ipv4_address: 172.20.0.100
     expose:
       - "8080"
 
@@ -111,6 +112,20 @@ services:
       POSTGRES_USER: stork
       POSTGRES_PASSWORD: stork123
       POSTGRES_DB: stork
+
+
+  traffic-dhcp:
+    build:
+      context: .
+      dockerfile: docker/docker-traffic-dhcp.txt
+    image: registry.gitlab.isc.org/isc-projects/stork/dhcp-traffic:latest
+    hostname: traffic-dhcp
+    networks:
+      storknet:
+        ipv4_address: 172.20.0.200
+    environment:
+      PERFDHCP_RATE: 1
+      PERFDHCP_CLIENTS: 1000
 
 volumes:
   db-data:
