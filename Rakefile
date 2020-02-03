@@ -498,6 +498,27 @@ task :run_bind9_container do
   sh 'docker run --rm -ti -p 9999:8080 -h agent-bind9 -v `pwd`/backend/cmd/stork-agent:/agent agent-bind9'
 end
 
+desc 'Starts generating DHCP traffic (starts the traffic-dhcp docker container if it isn\'t running)'
+task :start_dhcp_traffic do
+  dhcp_traffic_id = `docker ps | grep traffic-dhcp | awk '{ print $1 }'`
+  if dhcp_traffic_id != ""
+    puts "traffic-dhcp container already running: #{dhcp_traffic_id}"
+  else
+    sh 'docker-compose up traffic-dhcp'
+  end
+end
+
+desc 'Stops generating DHCP traffic (stops the traffic-dhcp docker container)'
+task :stop_dhcp_traffic do
+  dhcp_traffic_id = `docker ps | grep traffic-dhcp | awk '{ print $1 }'`
+  if dhcp_traffic_id != ""
+    sh "echo Stopping Docker container: #{dhcp_traffic_id}"
+    sh "docker stop #{dhcp_traffic_id}"
+  else
+    puts "traffic-dhcp container not found"
+  end
+end
+
 
 # Documentation
 desc 'Builds Stork documentation, using Sphinx'
