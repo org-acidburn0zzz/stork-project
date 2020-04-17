@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing'
 
 import { AppInitService } from './app-init.service'
 import { UsersService } from './backend'
-import { Component } from '@angular/core';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('AppInitService', () => {
