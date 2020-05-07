@@ -49,14 +49,19 @@ export class HostsPageComponent implements OnInit {
         this.updateOurQueryParams(ssParams)
 
         // subscribe to subsequent changes to query params
-        this.route.queryParamMap.subscribe((params) => {
-            this.updateOurQueryParams(params)
-            let event = { first: 0, rows: 10 }
-            if (this.hostsTable) {
-                event = this.hostsTable.createLazyLoadMetadata()
+        this.route.queryParamMap.subscribe(
+            (params) => {
+                this.updateOurQueryParams(params)
+                let event = { first: 0, rows: 10 }
+                if (this.hostsTable) {
+                    event = this.hostsTable.createLazyLoadMetadata()
+                }
+                this.loadHosts(event)
+            },
+            (error) => {
+                console.log(error)
             }
-            this.loadHosts(event)
-        })
+        )
     }
 
     updateOurQueryParams(params) {
@@ -73,10 +78,15 @@ export class HostsPageComponent implements OnInit {
     loadHosts(event) {
         const params = this.queryParams
 
-        this.dhcpApi.getHosts(event.first, event.rows, params.appId, null, params.text).subscribe((data) => {
-            this.hosts = data.items
-            this.totalHosts = data.total
-        })
+        this.dhcpApi.getHosts(event.first, event.rows, params.appId, null, params.text).subscribe(
+            (data) => {
+                this.hosts = data.items
+                this.totalHosts = data.total
+            },
+            (error) => {
+                console.log(error)
+            }
+        )
     }
 
     /**
